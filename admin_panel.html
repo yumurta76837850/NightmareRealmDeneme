@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nightmare Realm - Yönetim Konsolu</title>
+    <meta name="description" content="Nightmare Realm yönetim arayüzü.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&family=Creepster&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+
+    <!-- Kendi CSS dosyamız -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Yönetim Paneli için özel CSS dosyamız -->
+    <link rel="stylesheet" href="admin_panel.css">
+    <!-- Telif hakkı sayfası için hafif stil (gerekliyse) -->
+
+</head>
+<body class="admin-panel-body">
+
+    <!-- Noise and Flicker Overlays -->
+    <div class="noise-overlay"></div>
+    <div class="flicker-effect"></div>
+    <div class="cursor-effect"></div>
+
+    <div class="admin-wrapper">
+        <div class="admin-container">
+            <!-- Ana başlık daha çarpıcı -->
+            <h1 class="console-title glitch" data-text="KABUS KONTROL MERKEZİ">KABUS KONTROL MERKEZİ</h1>
+            
+            <!-- Güvenlik Uyarısı Kutusu -->
+            <div class="security-warning-box">
+                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                <p>Bu panel, Nightmare Realm'in **geliştirme ve test ortamı** için tasarlanmıştır. Güvenlik açıkları içerebilir ve **canlı sistemlerde ASLA kullanılmamalıdır!**</p>
+                <p>Lütfen yetkisiz erişime karşı dikkatli olun.</p>
+            </div>
+
+            <div class="admin-section data-section">
+                <h2><i class="fas fa-lock-open"></i> YÖNETİCİ ANAHTARLARI <i class="fas fa-lock-open"></i></h2>
+                <div id="adminUserList" class="admin-list">
+                    <!-- Admin anahtarları buraya JavaScript ile yüklenecek -->
+                    <p class="loading-message">
+                        <i class="fas fa-spinner fa-spin"></i> Yönetici anahtarları yükleniyor...
+                    </p>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="refreshAdminList" class="btn btn-secondary admin-action-btn">
+                    <i class="fas fa-sync-alt"></i> ANAHTARLARI YENİLE
+                </button>
+                <a href="/" class="btn btn-primary back-to-home-btn">
+                    <i class="fas fa-home"></i> ANA MENÜYE DÖN
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kendi JavaScript dosyamız -->
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminUserList = document.getElementById('adminUserList');
+            const refreshAdminListBtn = document.getElementById('refreshAdminList');
+
+            const API_BASE_URL = 'http://localhost:3000/api'; 
+
+            // Rastgele görünümlü bir anahtar dizesi oluşturur
+            function generateRandomKey(length = 18) {
+                const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=';
+                let result = '';
+                for (let i = 0; i < length; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return result;
+            }
+
+            // Yönetici kullanıcılarını getir ve listele
+            async function fetchAdminUsers() {
+                adminUserList.innerHTML = '<p class="loading-message"><i class="fas fa-spinner fa-spin"></i> Yönetici anahtarları yükleniyor...</p>';
+                try {
+                    const response = await fetch(`${API_BASE_URL}/admin-users`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Yönetici anahtarları alınamadı: ' + response.statusText);
+                    }
+
+                    const adminUsers = await response.json();
+
+                    let displayUsers = [...adminUsers]; // API'den gelen kullanıcıların kopyasını al
+                    
+                    // Eğer 10'dan az yönetici varsa, rastgele yer tutucu anahtarlar ekle
+                    const totalSlots = 10;
+                    if (displayUsers.length < totalSlots) {
+                        const needed = totalSlots - displayUsers.length;
+                        for (let i = 0; i < needed; i++) {
+                            // isPlaceholder bayrağı ile bu öğelerin gerçek kullanıcı olmadığını belirt
+                            displayUsers.push({ username: generateRandomKey(), isPlaceholder: true });
+                        }
+                    } else if (displayUsers.length > totalSlots) {
+                        // Eğer 10'dan fazla anahtar varsa, sadece ilk 10'u göster
+                        displayUsers = displayUsers.slice(0, totalSlots);
+                    }
+
+
+                    adminUserList.innerHTML = ''; // Önceki mesajları temizle
+                    
+                    displayUsers.forEach((user, index) => {
+                        const userItem = document.createElement('div');
+                        userItem.classList.add('admin-list-item');
+                        
+                        // Sıra numarasını göster
+                        const itemIndexSpan = document.createElement('span');
+                        itemIndexSpan.classList.add('item-index');
+                        itemIndexSpan.textContent = `${index + 1}.`;
+                        userItem.appendChild(itemIndexSpan);
+
+                        if (user.isPlaceholder) {
+                            // Yer tutucu anahtarlar için özel stil ve içerik
+                            userItem.classList.add('placeholder-item');
+                            userItem.innerHTML += `
+                                <span class="admin-username"><i class="fas fa-random"></i> ${user.username}</span>
+                                <span class="placeholder-tag">Kullanılmayan Slot</span>
+                            `;
+                        } else {
+                            // Gerçek admin anahtarları için
+                            userItem.innerHTML += `
+                                <span class="admin-username"><i class="fas fa-user-secret"></i> ${user.username}</span>
+                                <button class="btn btn-primary admin-login-btn" data-username="${user.username}">
+                                    <i class="fas fa-fingerprint"></i> Bu Kullanıcı Olarak Giriş Yap
+                                </button>
+                            `;
+                        }
+                        adminUserList.appendChild(userItem);
+                    });
+
+                    // Sadece gerçek giriş butonlarına click listener ekle
+                    document.querySelectorAll('.admin-login-btn').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const usernameToLogin = this.dataset.username;
+                            console.warn(`[Geliştirme Modu]: "${usernameToLogin}" olarak doğrudan giriş yapılıyor. Canlı sistemlerde bu yöntem ASLA kullanılmamalıdır.`);
+                            
+                            // Kullanıcının oturum açtığını yerel depolamada işaretle
+                            localStorage.setItem('loggedInUser', usernameToLogin); 
+                            localStorage.setItem('isAdminLoggedIn', 'true'); 
+
+                            // Basit bir onay mesajı
+                            alert(`"${usernameToLogin}" olarak admin paneline giriş yapıldı.`);
+                            // Ana sayfaya yönlendir
+                            window.location.href = '/'; 
+                        });
+                    });
+                } catch (error) {
+                    console.error('Yönetici anahtarları yüklenirken hata oluştu:', error);
+                    adminUserList.innerHTML = `<p class="error-message"><i class="fas fa-times-circle"></i> Hata: Yönetici anahtarları yüklenemedi. Sunucunun (backend) çalıştığından ve '/api/admin-users' endpoint'inin erişilebilir olduğundan emin olun. Detay: ${error.message}</p>`;
+                }
+            }
+
+            // Sayfa yüklendiğinde ve yenile butonuna basıldığında adminleri getir
+            fetchAdminUsers();
+            refreshAdminListBtn.addEventListener('click', fetchAdminUsers);
+
+            // Cursor effect and other global scripts (if desired, otherwise remove from here)
+            const cursorEffect = document.querySelector('.cursor-effect');
+            if (cursorEffect) {
+                document.addEventListener('mousemove', function(e) {
+                    cursorEffect.style.left = e.clientX + 'px';
+                    cursorEffect.style.top = e.clientY + 'px';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

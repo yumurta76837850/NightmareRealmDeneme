@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Telif Hakkı Bölümü</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon1.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="images/favicon1.ico" type="image/x-icon">
+    <!-- CSS -->
+    <link rel="stylesheet" href="bilgilendirme.css">
+</head>
+<body>
+    <div class="card">
+        <h1>Telif Hakkı Bildirimi</h1>
+
+        <p>
+            Bu siteye ait tüm içerikler, görseller, tasarımlar, metinler, kodlar ve düzenlemeler <strong>© <span id="year"></span> [ŞİRKET/ SİTE ADI]</strong> tarafından münhasıran korunmaktadır. İzinsiz kopyalanması, çoğaltılması, dağıtılması, yayınlanması veya türev eserler oluşturulması kesinlikle yasaktır ve ilgili yasal haklar saklıdır.
+        </p>
+
+        <h2>Kullanım Koşulları ve İzinler</h2>
+        <ul>
+            <li><strong>Münhasır Haklar:</strong> Tüm içerikler telif hakkı yasaları, uluslararası anlaşmalar ve diğer fikri mülkiyet düzenlemeleriyle korunmaktadır. İçeriğin tamamı veya herhangi bir kısmı, yazılı ön izin olmaksızın kullanılamaz, çoğaltılamaz, yeniden dağıtılamaz veya ticari amaçla istismar edilemez.</li>
+            <li><strong>İzin Talebi:</strong> İçeriğin özel veya ticari kullanımına yönelik yazılı izin talepleri için lütfen <a href="mailto:[YETKİLİ E-POSTA]">[YETKİLİ E-POSTA]</a> adresi üzerinden bizimle iletişime geçin. İzinler yazılı ve açık olarak verildiği takdirde geçerli olur.</li>
+            <li><strong>Üçüncü Taraf Materyaller:</strong> Site içerisinde yer alan üçüncü taraf içerik, markalar veya materyallerin telif hakları ilgili üçüncü taraflara aittir. Bu içeriklere ait izinler ve kullanım şartları o sağlayıcıların kendi politikalarına tabidir.</li>
+        </ul>
+
+
+<p>
+    Bu site içeriği <strong>CC BY-NC-SA 4.0</strong> lisansı kapsamında kullanılabilir; kaynak gösterilmek kaydıyla, ticari olmayan amaçlarla ve türev eserler aynı lisansla paylaşılmak şartıyla yeniden kullanılabilir.
+</p>
+        <p>
+            <strong>Not:</strong> Bu bildirim hukuki bir uyarıdır. Daha ileri düzey koruma, marka tescili veya telif hakkı tescili gibi adımlar için profesyonel hukuk danışmanından destek almanız tavsiye edilir.
+        </p>
+
+        <div class="footer">
+            <div>
+                <a href="index.html">&larr; Anasayfaya dön</a>
+            </div>
+            <div class="badge">
+                Güncellenme Tarihi: <span id="updated"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const yearEl = document.getElementById("year");
+        const updatedEl = document.getElementById("updated");
+        const now = new Date();
+        yearEl.textContent = now.getFullYear();
+        updatedEl.textContent = now.toLocaleDateString("tr-TR", { year: "numeric", month: "long", day: "numeric" });
+    </script>
+</body>
+</html>

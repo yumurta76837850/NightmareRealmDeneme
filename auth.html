@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nightmare Realm - Kayıt Ol / Giriş Yap</title>
+    <meta name="description" content="Nightmare Realm hesabınıza giriş yapın veya yeni bir hesap oluşturun.">
+    <meta name="keywords" content="korku oyunu, Nightmare Realm, kayıt ol, giriş yap, hesap">
+    <meta name="author" content="Ahmet Baba">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&family=Creepster&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Favicon (İsteğe Bağlı: Kendi ikonunuzu ekleyebilirsiniz) -->
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+
+    <!-- Kendi CSS dosyamız -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page-body">
+    <!-- Full-Screen Horror Loading Overlay -->
+
+    <!-- Custom Cursor Effect -->
+    <div class="cursor-effect"></div>
+
+    <!-- Header (Ana sayfadaki ile aynı olacak) -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1 class="glitch" data-text="NIGHTMARE REALM">NIGHTMARE REALM</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Başlangıç</a></li>
+                    <li><a href="/#about">Hakkında</a></li>
+                    <li><a href="/#features">Özellikler</a></li>
+                    <li><a href="/#trailer">Tanıtım</a></li>
+                    <li><a href="/#gallery">Galeri</a></li>
+                    <li><a href="/#download">İndir</a></li>
+                    <li><a href="/auth.html">Kayıt/Giriş</a></li>
+                    <li><a href="/#newsletter">Bülten</a></li>
+                    <li><a href="/bilgilendirme.html">Telif Hakkı</a></li> 
+                </ul>
+            </nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Noise and Flicker Overlays -->
+    <div class="noise-overlay"></div>
+    <div class="flicker-effect"></div>
+
+    <div class="auth-wrapper">
+        <div class="auth-container">
+            <div class="auth-card" id="registerCard">
+                <h2 class="glitch" data-text="Kayıt Ol">Kayıt Ol</h2>
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="regUsername">Kullanıcı Adı:</label>
+                        <input type="text" id="regUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPhone">Telefon Numarası:</label>
+                        <input type="tel" id="regPhone" placeholder="Örn: 5xx-xxx-xx-xx" pattern="[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}" title="Telefon numarası xxx-xxx-xx-xx formatında olmalıdır." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Parola:</label>
+                        <input type="password" id="regPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+                    <p id="registerMessage" class="auth-message"></p>
+                </form>
+                <p class="toggle-link">Zaten hesabın var mı? <a href="#" id="showLogin">Giriş Yap</a></p>
+                <p class="toggle-link back-to-home-link"><a href="/">Ana Menüye Dön</a></p>
+            </div>
+
+            <div class="auth-card hidden" id="loginCard">
+                <h2 class="glitch" data-text="Giriş Yap">Giriş Yap</h2>
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginUsername">Kullanıcı Adı:</label>
+                        <input type="text" id="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Parola:</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <!-- Yeni: Admin Anahtarı alanı -->
+                    <div class="form-group">
+                        <label for="loginAdminKey">Anahtar (Opsiyonel):</label>
+                        <input type="text" id="loginAdminKey" placeholder="Yönetici anahtarını buraya girin">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Giriş Yap</button>
+                    <p id="loginMessage" class="auth-message"></p>
+                </form>
+                <p class="toggle-link">Hesabın yok mu? <a href="#" id="showRegister">Kayıt Ol</a></p>
+                <p class="toggle-link back-to-home-link"><a href="/">Ana Menüye Dön</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kendi JavaScript dosyamız -->
+    <script src="script.js"></script>
+</body>
+</html>

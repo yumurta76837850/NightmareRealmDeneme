@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nightmare Realm - Korku Oyunu</title>
+    <meta name="description" content="En derin korkularınızı yaşayacağınız Nightmare Realm'e hoş geldiniz. Yeni nesil korku oyunu.">
+    <meta name="keywords" content="korku oyunu, Nightmare Realm, hayatta kalma, gerilim, indie oyun">
+    <meta name="author" content="Nightmare Realm">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&family=Creepster&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Favicon -->
+   <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Noise and Flicker Overlays -->
+    <div class="noise-overlay"></div>
+    <div class="flicker-effect"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1 data-text="Nightmare Realm">Nightmare Realm</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#hero">Başlangıç</a></li>
+                    <li><a href="#about">Hakkında</a></li>
+                    <li><a href="#features">Özellikler</a></li>
+                    <li><a href="#trailer">Tanıtım</a></li>
+                    <li><a href="#gallery">Galeri</a></li>
+                    <li><a href="#download">İndir</a></li>
+                    <li><a href="/auth.html">Kayıt/Giriş</a></li>
+                    <li><a href="#newsletter">Bülten</a></li>
+                    <li><a href="/bilgilendirme.html">Telif Hakkı</a></li> <!-- Bu satırı ekle -->
+                </ul>
+            </nav>
+
+
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <h2 class="glitch" data-text="Korkuya Hazır Mısın?">Korkuya Hazır Mısın?</h2>
+            <p>Gerçekliğin bozulduğu, kabusların canlandığı bir dünyaya adım at. Hayatta kalmak için karanlıkla yüzleş...</p>
+            <div class="cta-buttons">
+                <a href="#download" class="btn btn-primary">Şimdi İndir</a>
+                <a href="#trailer" class="btn btn-secondary">Tanıtımı İzle</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2 class="section-title glitch" data-text="Oyunun Hikayesi">Oyunun Hikayesi</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Karanlığın Derinlikleri</h3>
+                    <p>Nightmare Realm, psikolojik korku ve hayatta kalma unsurlarını bir araya getiren sürükleyici bir deneyim sunar. Terk edilmiş bir akıl hastanesinin ürkütücü koridorlarında geçen bu hikayede, geçmişin hayaletleriyle yüzleşmeli ve hayatta kalmanın bir yolunu bulmalısın.</p>
+                    <p>Her köşede seni bekleyen bilinmezlikler, zihnini zorlayacak bulmacalar ve kalbini donduracak dehşetlerle dolu. Attığın her adım, seni gerçeğin sınırlarını zorlayan bir maceranın içine çekecek.</p>
+                </div>
+                <div class="about-images">
+                    <div class="about-image">
+                        <img src="images/about-image1.svg" alt="Oyun İçi Görsel 1">
+                    </div>
+                    <div class="about-image">
+                        <img src="images/about-image2.svg" alt="Oyun İçi Görsel 2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <h2 class="section-title glitch" data-text="Oyun Özellikleri">Oyun Özellikleri</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-head-side-mask feature-icon"></i>
+                    <h3>Yoğun Psikolojik Korku</h3>
+                    <p>Zihninizi zorlayacak, algılarınızı altüst edecek bir korku deneyimi.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-puzzle-piece feature-icon"></i>
+                    <h3>Akıl Almaz Bulmacalar</h3>
+                    <p>Hayatta kalmak için ipuçlarını birleştir, zekanı kullan.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-skull-crossbones feature-icon"></i>
+                    <h3>Gerçekçi Atmosfer</h3>
+                    <p>Detaylı grafikler ve ürkütücü ses tasarımı ile gerilimi dorukta yaşa.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-user-secret feature-icon"></i>
+                    <h3>Sürükleyici Hikaye</h3>
+                    <p>Geçmişin sırlarını açığa çıkar ve kendi kaderini belirle.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trailer Section -->
+    <section id="trailer" class="trailer-section">
+        <div class="container">
+            <h2 class="section-title glitch" data-text="Resmi Tanıtım Videosu">Resmi Tanıtım Videosu</h2>
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <img src="images/trailer-thumbnail.svg" alt="Nightmare Realm Trailer Thumbnail">
+                    <div class="play-button">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery-section">
+        <div class="container">
+            <h2 class="section-title glitch" data-text="Kabuslardan Görüntüler">Kabuslardan Görüntüler</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="images/gallery1.svg" alt="Galeri Resmi 1">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/gallery2.svg" alt="Galeri Resmi 2">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/gallery3.svg" alt="Galeri Resmi 3">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/gallery4.svg" alt="Galeri Resmi 4">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/gallery5.svg" alt="Galeri Resmi 5">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/gallery6.svg" alt="Galeri Resmi 6">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="download-section">
+        <div class="container">
+            <h2 class="section-title glitch" data-text="Şimdi İndir ve Oyna">Şimdi İndir ve Oyna</h2>
+            <div class="download-content">
+                <div class="download-info">
+                    <p>Nightmare Realm'i şimdi indir ve kabusların içine dal. Oyunu farklı platformlarda oynayabilirsin.</p>
+                    <div class="system-requirements">
+                        <h3>Sistem Gereksinimleri</h3>
+                        <div class="requirements-columns">
+                            <div class="req-column">
+                                <h4>Minimum:</h4>
+                                <ul>
+                                    <li>İşletim Sistemi: Windows 10 (64-bit)</li>
+                                    <li>İşlemci: Intel Core i5-4460 / AMD FX-6300</li>
+                                    <li>Bellek: 8 GB RAM</li>
+                                    <li>Ekran Kartı: NVIDIA GeForce GTX 760 / AMD Radeon R7 260x</li>
+                                    <li>Depolama: 25 GB kullanılabilir alan</li>
+                                </ul>
+                            </div>
+                            <div class="req-column">
+                                <h4>Önerilen:</h4>
+                                <ul>
+                                    <li>İşletim Sistemi: Windows 10 (64-bit)</li>
+                                    <li>İşlemci: Intel Core i7-7700K / AMD Ryzen 5 1600</li>
+                                    <li>Bellek: 16 GB RAM</li>
+                                    <li>Ekran Kartı: NVIDIA GeForce GTX 1060 / AMD Radeon RX 580</li>
+                                    <li>Depolama: 25 GB SSD kullanılabilir alan</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="download-platforms">
+                    <a href="#" class="platform-btn">
+                        <i class="fab fa-windows"></i> <span>Windows için İndir</span>
+                    </a>
+                    <a href="#" class="platform-btn">
+                        <i class="fab fa-steam"></i> <span>Steam'den Satın Al</span>
+                    </a>
+                    <a href="#" class="platform-btn">
+                        <i class="fab fa-xbox"></i> <span>Xbox Versiyonu</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section id="newsletter" class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2 class="glitch" data-text="Bültenimize Abone Ol">Bültenimize Abone Ol</h2>
+                <p>En son güncellemelerden, haberlerden ve özel içeriklerden ilk sen haberdar ol!</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="E-posta adresini gir..." required>
+                    <button type="submit" class="btn btn-primary">Abone Ol</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Nightmare Realm</h2>
+                    <p>&copy; <span id="dynamic-year">2025</span> Nightmare Realm. Tüm hakları saklıdır. &middot; <a href="copyright.html" style="color: var(--accent-color); text-decoration:none;">Detaylı politika</a></p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Oyun</h3>
+                        <ul>
+                            <li><a href="#about">Hakkında</a></li>
+                            <li><a href="#features">Özellikler</a></li>
+                            <li><a href="#gallery">Galeri</a></li>
+                            <li><a href="#download">İndir</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Destek</h3>
+                        <ul>
+                            <li><a href="#">SSS</a></li>
+                            <li><a href="#">İletişim</a></li>
+                            <li><a href="#">Gizlilik Politikası</a></li>
+                            <li><a href="#">Kullanım Koşulları</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Topluluk</h3>
+                        <ul class="social-icons">
+                            <li><a href="https://facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a></li>
+                            <li><a href="https://twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a></li>
+                            <li><a href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a></li>
+                            <li><a href="https://youtube.com" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot Container -->
+    <div class="chatbot-container">
+        <div class="chatbot-toggle-button">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+        <div class="chatbot-window">
+            <div class="chatbot-header">
+                <h3>Nightmare Bot</h3>
+                <span class="chatbot-close-button">&times;</span>
+            </div>
+            <div class="chatbot-body">
+                <!-- Mesajlar buraya gelecek -->
+                <div class="message bot-message">
+                    <p>Hoş geldin! Nightmare Realm hakkında bilgi almak ister misin? Ya da belki sadece karanlıkta sohbet edebiliriz...</p>
+                </div>
+            </div>
+            <div class="chatbot-footer">
+                <input type="text" placeholder="Mesajını yaz..." id="chatbot-input">
+                <button id="chatbot-send-button"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="script.js"></script>
+    <script>
+      // Header telif hakkı yılı
+      document.getElementById('hdr-year').textContent = new Date().getFullYear();
+      // Footer dinamik yıl
+      document.getElementById('dynamic-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,102 @@
+/* bilgilendirme.css - Telif Hakkı Bilgilendirme Sayfası Stilleri */
+
+/* Genel Değişkenler (bilgilendirme.html'den alındı) */
+:root {
+    --bg: #f9f9f9;
+    --card: #ffffff;
+    --radius: 12px;
+    --shadow: 0 8px 24px rgba(0,0,0,0.08);
+    --maxw: 720px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1f2937;
+}
+
+/* Body Stilleri */
+body {
+    margin: 0;
+    background: var(--bg);
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* Kart Stili */
+.card {
+    background: var(--card);
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: var(--maxw);
+    width: 100%;
+    line-height: 1.5;
+}
+
+/* Başlık Stili */
+h1 {
+    margin-top: 0;
+    font-size: 1.75rem;
+}
+
+/* Küçük Yazı Stili */
+small {
+    color: #555;
+}
+
+/* Link Stili */
+a {
+    color: #3771db;
+    text-decoration: none;
+}
+
+/* Alt Kısım (Footer) Stili */
+.footer {
+    margin-top: 2rem;
+    font-size: .9rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-between;
+}
+
+/* Rozet Stili */
+.badge {
+    background: #eef2ff;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: .65rem;
+    display: inline-block;
+}
+
+/* Ekstra hafif dokunuşlar */
+p {
+    margin-bottom: 1rem;
+}
+
+ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+li {
+    margin-bottom: 0.5rem;
+}
+
+/* Başlık ve alt başlıklar için hafif gölgelendirme */
+h1, h2, h3 {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Linklere hover efekti */
+a:hover {
+    text-decoration: underline;
+    opacity: 0.9;
+}
+
+/* Footer linki için özel stil */
+.footer a {
+    font-weight: 600;
+}

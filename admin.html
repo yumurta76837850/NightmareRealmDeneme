@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nightmare Realm - Yönetim Paneli</title>
+    <meta name="description" content="Nightmare Realm Yönetim Paneli - Sistem Yönetimi, İstatistikler ve Günlükler.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&family=Creepster&family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+
+    <!-- Genel CSS dosyamız -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Yönetim Paneli için özel CSS dosyamız -->
+    <link rel="stylesheet" href="admin_panel.css"> 
+
+    <style>
+        /* admin.html'e özgü ek stiller veya admin_panel.css'i genişleten stiller */
+        /* Bu stil bloğu, doğrudan admin_panel.css'e taşınabilecek genel düzen ve responsive ayarları içerir. */
+        /* Ancak, html dosyasında kalması istenirse burada tutulabilir. */
+        body.admin-dashboard-body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--dark-bg);
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('images/hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .admin-dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr 280px; /* Sol menü, ana içerik, sağ panel */
+            gap: 25px;
+            width: 100%;
+            max-width: 1300px; /* Daha geniş bir düzen */
+            min-height: calc(100vh - 40px);
+            background-color: rgba(18, 18, 18, 0.95);
+            border: 3px solid var(--primary-color);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(139, 0, 0, 0.9), 0 0 80px rgba(255, 69, 0, 0.4);
+            position: relative;
+            overflow: hidden; /* Kenardan taşan gölgeleri gizle */
+            z-index: 1; /* Overlaylerin üzerinde kalması için */
+        }
+        
+        .admin-dashboard-layout::before { /* Ana kapsayıcıya dıştan parlayan kenarlık efekti */
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 22px;
+            border: 1px solid transparent;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--primary-color)) border-box;
+            /* Vendor prefix ve standart mask özelliği EKLENDİ - Önceki uyarıyı giderir */
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); /* Bu satır eklendi/kontrol edildi */
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+            animation: pulse-border 5s infinite alternate;
+        }
+
+        .dashboard-header {
+            grid-column: 1 / -1; /* Tüm sütunları kapla */
+            text-align: center;
+            padding: 20px 0 0;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-title {
+            font-family: var(--font-heading);
+            font-size: 3.8rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(139, 0, 0, 1), 0 0 30px rgba(255, 69, 0, 0.5);
+            letter-spacing: 4px;
+            animation: flicker-glitch 0.1s steps(2, end) infinite;
+        }
+
+        .welcome-message {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-bottom: 0;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Sol Panel */
+        .left-panel {
+            background-color: rgba(10, 10, 10, 0.85);
+            border-right: 1px solid rgba(139, 0, 0, 0.4);
+            padding: 30px 20px;
+            border-bottom-left-radius: 20px;
+            box-shadow: inset -5px 0 15px rgba(139, 0, 0, 0.1);
+        }
+
+        .left-panel h3 {
+            font-family: var(--font-display);
+            color: var(--accent-color);
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            text-shadow: 0 0 8px rgba(255, 69, 0, 0.6);
+            border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .main-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            background-color: rgba(30, 30, 30, 0.9);
+            border: 1px solid rgba(139, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-item .label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            margin-bottom: 5px;
+            font-family: var(--font-inter);
+        }
+
+        .stat-item .value {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            font-family: var(--font-display);
+            text-shadow: 0 0 8px rgba(139, 0, 0, 0.8);
+            font-weight: bold;
+        }
+
+        .dashboard-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dashboard-nav ul li {
+            margin-bottom: 10px;
+        }
+
+        .dashboard-nav ul li a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            background-color: rgba(30, 30, 30, 0.7);
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+        }
+
+        .dashboard-nav ul li a i {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+        }
+
+        .dashboard-nav ul li a:hover,
+        .dashboard-nav ul li a.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--accent-color);
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(139, 0, 0, 0.8);
+        }
+
+        .dashboard-nav ul li a.active i {
+            color: white;
+            text-shadow: 0 0 8px rgba(255, 69, 0, 1);
+        }
+
+        /* Ana İçerik Bölümü */
+        .main-content {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        /* Sağ Panel */
+        .right-panel {
+            background-color: rgba(10, 10, 10, 0.85);
+            border-left: 1px solid rgba(139, 0, 0, 0.4);
+            padding: 30px 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: inset 5px 0 15px rgba(139, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .right-panel h3 {
+            font-family: var(--font-display);
+            color: var(--accent-color);
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 8px rgba(255, 69, 0, 0.6);
+            border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center; /* Sağ panel başlığını ortala */
+        }
+
+        .random-keys-list {
+            max-height: calc(100% - 120px); /* Kalan alanı kapla */
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .random-key-item {
+            background-color: rgba(30, 30, 30, 0.7);
+            border: 1px dashed rgba(139, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-family: 'Press Start 2P', monospace; /* Pixel fontu */
+            font-size: 0.8rem;
+            color: var(--text-color);
+            word-break: break-all;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.1);
+            line-height: 1.3;
+        }
+        
+        /* Terminal Çıktısı Alanı */
+        .terminal-output-section {
+            grid-column: 2 / -1; /* Ana içerik ve sağ paneli kapsa */
+            background-color: rgba(0, 0, 0, 0.9);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 0 0 20px 0; /* Alt sağ köşeyi yuvarla */
+            padding: 20px;
+            font-family: 'Press Start 2P', monospace; /* Terminal fontu */
+            font-size: 0.9rem;
+            color: #00FF00; /* Yeşil terminal metni */
+            overflow-y: auto;
+            max-height: 250px; /* Belirli bir yükseklik */
+            box-shadow: inset 0 5px 20px rgba(0, 0, 0, 0.8);
+            text-align: left;
+            position: relative;
+        }
+
+        .terminal-output-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 255, 0, 0.1),
+                    rgba(0, 255, 0, 0.05) 1px,
+                    transparent 1px,
+                    transparent 2px
+                ); /* Scanline efekti */
+            pointer-events: none; /* Etkileşimi engellemez */
+            z-index: 1;
+        }
+
+        .terminal-line {
+            padding: 2px 0;
+            white-space: pre-wrap; /* Uzun satırları otomatik sar */
+            line-height: 1.4;
+            animation: text-flicker 0.1s steps(2, end) infinite alternate; /* Hafif titreme */
+        }
+
+        @keyframes text-flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.9; }
+            100% { opacity: 1; }
+        }
+
+        .terminal-line.command {
+            color: #FFD700; /* Sarımsı */
+        }
+        .terminal-line.error {
+            color: #FF4500; /* Kırmızı */
+        }
+        .terminal-line.info {
+            color: #00BFFF; /* Mavi */
+        }
+        .terminal-line.success {
+            color: #32CD32; /* Yeşil */
+        }
+        .terminal-line.prompt {
+            color: #FFFFFF; /* Beyaz */
+        }
+
+
+        /* Modal stilleri (zaten admin_panel.css'de tanımlı ama özelleştirebiliriz) */
+        .settings-modal {
+            display: none; /* Varsayılan olarak gizli */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8); /* Daha koyu arkaplan */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .settings-modal .modal-content {
+            background-color: rgba(26, 26, 26, 0.95);
+            margin: auto;
+            padding: 40px;
+            border: 2px solid var(--primary-color);
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.8);
+            position: relative;
+        }
+
+        .settings-modal .close-button {
+            color: var(--text-color);
+            font-size: 2.5rem;
+            font-weight: bold;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .settings-modal .close-button:hover,
+        .settings-modal .close-button:focus {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .settings-modal h2 {
+            font-family: var(--font-heading);
+            font-size: 2.8rem;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(139, 0, 0, 0.9);
+        }
+
+        /* Kullanıcı Listesi ve Detay Modalları için özelleştirme */
+        .user-detail-modal-list .user-item { /* admin_panel.html'deki admin-list-item'dan türetildi */
+            padding: 15px 20px;
+            font-size: 1rem;
+            display: flex;
+            flex-direction: column; /* Dikey düzen */
+            align-items: flex-start;
+            gap: 5px;
+        }
+        .user-detail-modal-list .user-item span {
+            display: block; /* Her bilgiyi yeni satıra al */
+            color: var(--text-color);
+            font-family: var(--font-inter);
+        }
+        .user-detail-modal-list .user-item .username-display {
+            font-family: var(--font-display);
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        .user-detail-modal-list .user-item .is-admin-tag {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .user-detail-modal-list .user-item .user-id {
+            font-size: 0.85rem;
+            color: #777;
+        }
+        .user-detail-modal-list .user-item button { /* Kullanıcı Detayındaki Buton */
+            margin-top: 10px;
+            font-size: 0.85rem;
+            padding: 8px 15px;
+            background: linear-gradient(45deg, #FF6347, #DC143C); /* Domates kırmızısı */
+        }
+        .user-detail-modal-list .user-item button:hover {
+            background: linear-gradient(45deg, #DC143C, #FF6347);
+        }
+
+
+        /* responsive */
+        @media (max-width: 1024px) {
+            .admin-dashboard-layout {
+                grid-template-columns: 200px 1fr; /* Sağ panel altta */
+                grid-template-rows: auto 1fr auto; /* Başlık, içerik, alt panel */
+                max-width: 95%;
+            }
+            .left-panel {
+                grid-column: 1 / 2;
+                grid-row: 2 / 3;
+                border-right: none;
+                border-bottom: 1px solid rgba(139, 0, 0, 0.4);
+                border-bottom-left-radius: 0;
+            }
+            .main-content {
+                grid-column: 2 / 3;
+                grid-row: 2 / 3;
+            }
+            .right-panel {
+                grid-column: 1 / -1; /* Sağ panel tüm genişliği kapla */
+                grid-row: 3 / 4;
+                border-left: none;
+                border-top: 1px solid rgba(139, 0, 0, 0.4);
+                border-bottom-right-radius: 20px;
+                border-bottom-left-radius: 20px;
+            }
+            .terminal-output-section {
+                grid-column: 1 / -1; /* Terminal tüm genişliği kapla */
+                grid-row: 4 / 5;
+                border-radius: 0 0 20px 20px; /* Alttaki köşeleri yuvarla */
+            }
+            .dashboard-title {
+                font-size: 3rem;
+            }
+            .welcome-message {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-dashboard-layout {
+                grid-template-columns: 1fr; /* Tek sütun */
+                grid-template-rows: auto auto auto auto auto; /* Başlık, sol, ana, sağ, terminal */
+                padding: 15px;
+            }
+            .dashboard-header {
+                padding-top: 0;
+                margin-bottom: 15px;
+            }
+            .left-panel, .main-content, .right-panel, .terminal-output-section {
+                grid-column: 1 / 2;
+                border: none; /* Kenarlıklar kalksın */
+                border-radius: 15px;
+                margin-bottom: 15px;
+                box-shadow: 0 0 15px rgba(139, 0, 0, 0.3); /* Tekil kutu gölgesi */
+            }
+            .left-panel {
+                border-bottom-left-radius: 15px;
+                border-bottom-right-radius: 15px;
+            }
+            .right-panel {
+                border-top-left-radius: 15px;
+                border-top-right-radius: 15px;
+            }
+            .dashboard-title {
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+            }
+            .welcome-message {
+                font-size: 1rem;
+            }
+            .left-panel h3, .right-panel h3 {
+                font-size: 1.5rem;
+                justify-content: center;
+            }
+            .dashboard-nav ul li a {
+                font-size: 1rem;
+                padding: 12px 15px;
+            }
+            .main-content, .right-panel {
+                padding: 20px;
+            }
+            .random-key-item {
+                font-size: 0.7rem;
+            }
+            .terminal-output-section {
+                font-size: 0.8rem;
+                padding: 15px;
+                border-radius: 15px;
+            }
+            .settings-modal .modal-content {
+                width: 95%;
+                padding: 30px 20px;
+            }
+            .settings-modal h2 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body class="admin-dashboard-body">
+
+    <!-- Noise and Flicker Overlays -->
+    <div class="noise-overlay"></div>
+    <div class="flicker-effect"></div>
+
+    <!-- Custom Cursor Effect -->
+    <div class="cursor-effect"></div>
+
+    <div class="admin-dashboard-layout">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <h1 class="dashboard-title glitch" data-text="KABUS KONTROL MERKEZİ">KABUS KONTROL MERKEZİ</h1>
+            <p class="welcome-message">Hoş geldin, <span id="adminUsernameDisplay">Yönetici</span>! Sistem istatistikleri ve yönetim araçları emrinde.</p>
+        </div>
+
+        <!-- Sol Panel - Genel İstatistikler ve Menü -->
+        <div class="left-panel">
+            <h3><i class="fas fa-chart-pie"></i> Genel Bakış</h3>
+            <div class="main-stats-grid">
+                <div class="stat-item">
+                    <span class="label">Toplam Kayıtlı Kullanıcı:</span>
+                    <span class="value" id="totalUsersOverall">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Site Erişim Sayısı:</span>
+                    <span class="value" id="siteAccessCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Başarılı Girişler:</span>
+                    <span class="value" id="successfulLoginsCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Başarısız Girişler:</span>
+                    <span class="value" id="failedLoginsCount">0</span>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-clipboard-list"></i> Yönetim Menüsü</h3>
+            <nav class="dashboard-nav">
+                <ul>
+                    <li><a href="#" data-section="user-management" class="active"><i class="fas fa-users-cog"></i> Kullanıcı Yönetimi</a></li>
+                    <li><a href="#" data-section="system-settings"><i class="fas fa-cogs"></i> Sistem Ayarları</a></li>
+                    <li><a href="#" data-section="performance-monitoring"><i class="fas fa-chart-line"></i> Performans İzleme</a></li>
+                    <li><a href="#" data-section="access-logs"><i class="fas fa-history"></i> Erişim Günlükleri</a></li>
+                    <li><a href="#" data-section="error-logs"><i class="fas fa-bug"></i> Hata Günlükleri</a></li>
+                </ul>
+            </nav>
+            <button id="logoutButton" class="btn btn-primary mt-5 w-100">
+                <i class="fas fa-sign-out-alt"></i> Güvenli Çıkış Yap
+            </button>
+        </div>
+
+        <!-- Ana İçerik Bölümü (Dinamik) -->
+        <div class="main-content">
+            <!-- Kullanıcı Yönetimi Bölümü (Varsayılan) -->
+            <div id="user-management-section" class="content-section active">
+                <h2 class="section-title glitch" data-text="Kullanıcı Yönetimi">Kullanıcı Yönetimi</h2>
+                <p>Sistemdeki tüm kayıtlı kullanıcıları görüntüle, düzenle veya kaldır.</p>
+                <!-- Ekran görüntüsündeki butonlar buraya eklenecek -->
+                <div class="admin-actions" style="margin-top: 20px; display: flex; gap: 15px; justify-content: center;">
+                    <!-- 'Bu Kullanıcı Olarak Giriş Yap' butonu kaldırıldı, çünkü bu yönetim panelinden yapılmaz. -->
+                    <!-- 'Detaylı Kullanıcı Listesi' butonu yerine, doğrudan listeyi göstereceğiz. -->
+                    <button id="refreshUserListBtn" class="btn btn-primary"><i class="fas fa-sync-alt"></i> Kullanıcıları Yenile</button>
+                    <button id="returnToMainMenuBtn" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Menüye Dön</button>
+                </div>
+                <div id="userListContent" class="admin-list user-details-list" style="max-height: 500px; overflow-y: auto;">
+                    <p class="loading-message"><i class="fas fa-spinner fa-spin"></i> Kullanıcılar yükleniyor...</p>
+                    <!-- Test için daha fazla kullanıcı verisi -->
+                    <div class="user-item">
+                        <span class="username-display">ahmet baba</span> <span class="is-admin-tag">ADMIN</span>
+                        <span>ID: user_12345abcdef</span>
+                        <span>Telefon: +905551234567</span>
+                        <button class="btn btn-primary">Yönetici Yap</button>
+                    </div>
+                    <div class="user-item">
+                        <span class="username-display">deneme_kullanici</span>
+                        <span>ID: user_67890ghijkl</span>
+                        <span>Telefon: +905329876543</span>
+                        <button class="btn btn-secondary">Kullanıcı Yap</button>
+                    </div>
+                    <div class="user-item">
+                        <span class="username-display">test_user_3</span>
+                        <span>ID: user_abcde12345</span>
+                        <span>Telefon: +905443210987</span>
+                        <button class="btn btn-secondary">Kullanıcı Yap</button>
+                    </div>
+                    <div class="user-item">
+                        <span class="username-display">user_four</span>
+                        <span>ID: user_fghij67890</span>
+                        <span>Telefon: +905051112233</span>
+                        <button class="btn btn-secondary">Kullanıcı Yap</button>
+                    </div>
+                    <div class="user-item">
+                        <span class="username-display">alpha_user</span>
+                        <span>ID: user_klmno98765</span>
+                        <span>Telefon: +905064445566</span>
+                        <button class="btn btn-secondary">Kullanıcı Yap</button>
+                    </div>
+                     <div class="user-item">
+                        <span class="username-display">beta_tester</span>
+                        <span>ID: user_pqrst12345</span>
+                        <span>Telefon: +905077778899</span>
+                        <button class="btn btn-secondary">Kullanıcı Yap</button>
+                    </div>
+                    <div class="user-item">
+                        <span class="username-display">gamma_prime</span>
+                        <span>ID: user_uvwxy09876</span>
+                        <span>Telefon: +905081234567</span>
+                        <button class="btn btn-secondary">Kullanıcı Yap</button>
+                    </div>
+                     <div class="user-item">
+                        <span class="username-display">delta_force</span>
+                        <span>ID: user_abcde11122</span>
+                        <span>Telefon: +905093334455</span>
+                        <button class="btn btn-secondary">Kullanıcı Yap</button>
+                    </div>
+                    <div class="user-item">
+                        <span class="username-display">echo_user</span>
+                        <span>ID: user_fghij66677</span>
+                        <span>Telefon: +905108889900</span>
+                        <button class="btn btn-secondary">Kullanıcı Yap</button>
+                    </div>
+                    <div class="user-item">
+                        <span class="username-display">foxtrot_one</span>
+                        <span>ID: user_klmno22233</span>
+                        <span>Telefon: +905111231231</span>
+                        <button class="btn btn-secondary">Kullanıcı Yap</button>
+                    </div>
+                     <div class="user-item">
+                        <span class="username-display">golf_leader</span>
+                        <span>ID: user_pqrst44455</span>
+                        <span>Telefon: +905124564564</span>
+                        <button class="btn btn-secondary">Kullanıcı Yap</button>
+                    </div>
+                    <div class="user-item">
+                        <span class="username-display">hotel_alpha</span>
+                        <span>ID: user_uvwxy77788</span>
+                        <span>Telefon: +905137897897</span>
+                        <button class="btn btn-secondary">Kullanıcı Yap</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sistem Ayarları Bölümü -->
+            <div id="system-settings-section" class="content-section hidden">
+                <h2 class="section-title glitch" data-text="Sistem Ayarları">Sistem Ayarları</h2>
+                <form id="siteSettingsForm" class="settings-form">
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="horrorModeToggle"> Kabus Modunu Etkinleştir (Yoğun Görsel Efektler)
+                        </label>
+                        <small style="color: rgba(255, 255, 255, 0.6);">Sitedeki titreşim ve karanlık efektlerin yoğunluğunu kontrol eder.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="primaryColorPicker">Ana Renk Teması:</label>
+                        <input type="color" id="primaryColorPicker" value="#8B0000">
+                        <small style="color: rgba(255, 255, 255, 0.6);">Sitenin ana vurgu rengini değiştirir.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="siteAnnouncement">Ana Sayfa Duyurusu:</label>
+                        <textarea id="siteAnnouncement" placeholder="Buraya ana sayfa için duyuru metnini girin..."></textarea>
+                        <small style="color: rgba(255, 255, 255, 0.6);">Ana sayfada görünecek kısa bir duyuru veya mesaj. (Kalıcı olması için backend gereklidir.)</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-save-settings"><i class="fas fa-save"></i> Ayarları Kaydet</button>
+                    <p id="settingsMessage" class="auth-message"></p>
+                </form>
+            </div>
+
+            <!-- Performans İzleme Bölümü -->
+            <div id="performance-monitoring-section" class="content-section hidden">
+                <h2 class="section-title glitch" data-text="Performans İzleme">Performans İzleme</h2>
+                <p>Sunucu performansını ve sistem kaynaklarını (CPU, RAM) gerçek zamanlı olarak izleyin.</p>
+                <div class="feature-card-admin disabled-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Veri Yükleniyor...</h3>
+                    <p>Bu bölümdeki grafikler ve canlı veriler çok yakında aktif olacak.</p>
+                </div>
+            </div>
+
+            <!-- Erişim Günlükleri Bölümü -->
+            <div id="access-logs-section" class="content-section hidden">
+                <h2 class="section-title glitch" data-text="Erişim Günlükleri">Erişim Günlükleri</h2>
+                <p>Siteye yapılan her türlü erişimi ve güvenlik olaylarını takip et.</p>
+                <button id="refreshLogsContent" class="btn btn-secondary admin-action-btn mb-3">
+                    <i class="fas fa-sync-alt"></i> Günlükleri Yenile
+                </button>
+                <div id="accessLogListContent" class="admin-list log-list">
+                    <p class="loading-message"><i class="fas fa-spinner fa-spin"></i> Günlükler yükleniyor...</p>
+                </div>
+                <p id="accessLogsContentMessage" class="auth-message"></p>
+            </div>
+
+            <!-- Hata Günlükleri Bölümü -->
+            <div id="error-logs-section" class="content-section hidden">
+                <h2 class="section-title glitch" data-text="Hata Günlükleri">Hata Günlükleri</h2>
+                <p>Sistemdeki kritik hata ve uyarı günlüklerini incele.</p>
+                <div class="feature-card-admin disabled-card">
+                    <i class="fas fa-bug"></i>
+                    <h3>Veri Yükleniyor...</h3>
+                    <p>Hata logları detaylı analiz için hazırlanıyor.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Panel - Rastgele Anahtarlar -->
+        <div class="right-panel">
+            <h3><i class="fas fa-key"></i> Aktif Anahtar Akışı</h3>
+            <div class="random-keys-list" id="randomKeysList">
+                <!-- Rastgele anahtarlar buraya JS ile eklenecek -->
+            </div>
+        </div>
+
+        <!-- Terminal Çıktısı Alanı -->
+        <div class="terminal-output-section" id="terminalOutput">
+            <div class="terminal-line prompt">> _</div>
+        </div>
+    </div>
+
+    <!-- Kendi JavaScript dosyamız -->
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminUsernameDisplay = document.getElementById('adminUsernameDisplay');
+            const logoutButton = document.getElementById('logoutButton');
+            
+            // Genel İstatistikler
+            const totalUsersOverall = document.getElementById('totalUsersOverall');
+            const siteAccessCount = document.getElementById('siteAccessCount');
+            const successfulLoginsCount = document.getElementById('successfulLoginsCount');
+            const failedLoginsCount = document.getElementById('failedLoginsCount');
+
+            // Menü ve İçerik Bölümleri
+            const dashboardNavLinks = document.querySelectorAll('.dashboard-nav ul li a');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            // Sistem Ayarları Bölümü
+            const siteSettingsForm = document.getElementById('siteSettingsForm');
+            const horrorModeToggle = document.getElementById('horrorModeToggle');
+            const primaryColorPicker = document.getElementById('primaryColorPicker');
+            const siteAnnouncementInput = document.getElementById('siteAnnouncement');
+            const settingsMessage = document.getElementById('settingsMessage');
+
+            // Erişim Günlükleri Bölümü
+            const refreshLogsContentBtn = document.getElementById('refreshLogsContent');
+            const accessLogListContent = document.getElementById('accessLogListContent');
+            const accessLogsContentMessage = document.getElementById('accessLogsContentMessage');
+
+            // Kullanıcı Yönetimi Bölümü için yeni butonlar ve içerikler
+            const userListContent = document.getElementById('userListContent');
+            const refreshUserListBtn = document.getElementById('refreshUserListBtn');
+            const returnToMainMenuBtn = document.getElementById('returnToMainMenuBtn'); // Yeni buton
+
+            // Sağ Panel Random Keys
+            const randomKeysList = document.getElementById('randomKeysList');
+
+            // Terminal Çıktısı
+            const terminalOutput = document.getElementById('terminalOutput');
+
+
+            const API_BASE_URL = 'http://localhost:3000/api'; 
+
+            // --- Güvenlik Kontrolü: Admin Girişi Doğrulaması ---
+            const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn');
+            const loggedInUsername = localStorage.getItem('loggedInUsername');
+
+            if (isAdminLoggedIn !== 'true' || !loggedInUsername) {
+                alert('Yönetim paneline erişim için lütfen yönetici olarak giriş yapın.');
+                window.location.href = '/auth.html';
+                return;
+            }
+
+            adminUsernameDisplay.textContent = loggedInUsername;
+
+            logoutButton.addEventListener('click', function() {
+                localStorage.removeItem('isAdminLoggedIn');
+                localStorage.removeItem('loggedInUsername');
+                alert('Yönetim panelinden başarıyla çıkış yaptınız.');
+                window.location.href = '/auth.html';
+            });
+
+            // Dashboard başlığı glitch efekti
+            const dashboardTitle = document.querySelector('.dashboard-title');
+            if (dashboardTitle) {
+                dashboardTitle.setAttribute('data-text', dashboardTitle.textContent);
+                setInterval(() => {
+                    if (Math.random() < 0.4) {
+                        dashboardTitle.classList.add('glitch');
+                        setTimeout(() => {
+                            dashboardTitle.classList.remove('glitch');
+                        }, 600);
+                    }
+                }, 4000);
+            }
+
+            // Cursor effect from global script.js (if loaded)
+            const cursorEffect = document.querySelector('.cursor-effect');
+            if (cursorEffect) {
+                document.addEventListener('mousemove', function(e) {
+                    cursorEffect.style.left = e.clientX + 'px';
+                    cursorEffect.style.top = e.clientY + 'px';
+                });
+            }
+
+            // --- Menü Navigasyonu ---
+            dashboardNavLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    dashboardNavLinks.forEach(navLink => navLink.classList.remove('active'));
+                    this.classList.add('active');
+
+                    contentSections.forEach(section => section.classList.add('hidden'));
+                    const targetSectionId = this.dataset.section + '-section';
+                    document.getElementById(targetSectionId).classList.remove('hidden');
+
+                    // Sadece ilgili bölümde verileri yenile (eğer varsa)
+                    if (this.dataset.section === 'access-logs') {
+                        fetchAccessLogs();
+                    } else if (this.dataset.section === 'user-management') {
+                        fetchUsers(); // Kullanıcı listesini yenile
+                    }
+                });
+            });
+
+            // "Ana Menüye Dön" butonu işlevselliği
+            returnToMainMenuBtn.addEventListener('click', function() {
+                window.location.href = '/index.html'; // Ana menüye yönlendir
+            });
+
+
+            // --- Genel İstatistikleri Yükle ---
+            async function fetchOverallStats() {
+                try {
+                    const usersResponse = await fetch(`${API_BASE_URL}/stats/users`);
+                    const usersData = await usersResponse.json();
+                    totalUsersOverall.textContent = usersData.totalUsers;
+
+                    const logsResponse = await fetch(`${API_BASE_URL}/stats/logs`);
+                    const logsData = await logsResponse.json();
+
+                    let siteAccess = 0;
+                    let successfulLogins = 0;
+                    let failedLogins = 0;
+
+                    logsData.forEach(log => {
+                        if (log.type === 'SiteErisim') siteAccess++;
+                        if (log.type === 'GirisBasarili') successfulLogins++;
+                        if (log.type === 'GirisBasarisiz') failedLogins++;
+                    });
+
+                    siteAccessCount.textContent = siteAccess;
+                    successfulLoginsCount.textContent = successfulLogins;
+                    failedLoginsCount.textContent = failedLogins;
+
+                } catch (error) {
+                    console.error('Genel istatistikler yüklenirken hata:', error);
+                    totalUsersOverall.textContent = 'Hata!';
+                    siteAccessCount.textContent = 'Hata!';
+                    successfulLoginsCount.textContent = 'Hata!';
+                    failedLoginsCount.textContent = 'Hata!';
+                }
+            }
+            fetchOverallStats(); // Sayfa yüklendiğinde istatistikleri çek
+            setInterval(fetchOverallStats, 30000); // Her 30 saniyede bir güncelle
+
+            // --- Sistem Ayarları İşlevselliği ---
+            function loadSettings() {
+                const settings = JSON.parse(localStorage.getItem('siteSettings')) || {};
+                horrorModeToggle.checked = settings.horrorMode !== undefined ? settings.horrorMode : true;
+                primaryColorPicker.value = settings.primaryColor || '#8B0000';
+                siteAnnouncementInput.value = settings.siteAnnouncement || '';
+            }
+
+            siteSettingsForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const settings = {
+                    horrorMode: horrorModeToggle.checked,
+                    primaryColor: primaryColorPicker.value,
+                    siteAnnouncement: siteAnnouncementInput.value.trim()
+                };
+                localStorage.setItem('siteSettings', JSON.stringify(settings));
+                settingsMessage.textContent = 'Ayarlar başarıyla kaydedildi!';
+                settingsMessage.className = 'auth-message success';
+                applySettingsToPage(settings);
+                setTimeout(() => {
+                    settingsMessage.textContent = '';
+                }, 2000);
+            });
+            
+            // Ayarları sayfaya uygulama fonksiyonu (admin.html ve genel CSS değişkenleri için)
+            function applySettingsToPage(settings) {
+                document.documentElement.style.setProperty('--primary-color', settings.primaryColor);
+                if (!settings.horrorMode) {
+                    document.body.classList.add('no-flicker-noise');
+                } else {
+                    document.body.classList.remove('no-flicker-noise');
+                }
+                // Ana sayfada duyuru göstermek için (index.html'e de JS eklemeniz gerekir)
+                console.log("Site duyurusu (kaydedildi):", settings.siteAnnouncement);
+            }
+            loadSettings();
+            applySettingsToPage(JSON.parse(localStorage.getItem('siteSettings')) || {});
+
+            // --- Kullanıcı Yönetimi İşlevselliği ---
+            refreshUserListBtn.addEventListener('click', fetchUsers);
+
+            async function fetchUsers() {
+                userListContent.innerHTML = '<p class="loading-message"><i class="fas fa-spinner fa-spin"></i> Kullanıcılar yükleniyor...</p>';
+                try {
+                    const response = await fetch(`${API_BASE_URL}/stats/users`);
+                    if (!response.ok) {
+                        throw new Error('Kullanıcılar alınamadı: ' + response.statusText);
+                    }
+                    const users = await response.json();
+                    
+                    if (users.length === 0) {
+                        userListContent.innerHTML = '<p class="no-users-message">Henüz kayıtlı kullanıcı bulunamadı.</p>';
+                    } else {
+                        userListContent.innerHTML = ''; // Mevcut içeriği temizle
+                        users.forEach(user => {
+                            const userItemDiv = document.createElement('div');
+                            userItemDiv.classList.add('user-item');
+                            
+                            const usernameSpan = document.createElement('span');
+                            usernameSpan.classList.add('username-display');
+                            usernameSpan.textContent = user.username;
+                            if (user.isAdmin) {
+                                const adminTag = document.createElement('span');
+                                adminTag.classList.add('is-admin-tag');
+                                adminTag.textContent = 'ADMIN';
+                                usernameSpan.appendChild(adminTag);
+                            }
+                            userItemDiv.appendChild(usernameSpan);
+
+                            const userIdSpan = document.createElement('span');
+                            userIdSpan.classList.add('user-id');
+                            userIdSpan.textContent = `ID: ${user.id || 'N/A'}`;
+                            userItemDiv.appendChild(userIdSpan);
+
+                            const phoneSpan = document.createElement('span');
+                            phoneSpan.textContent = `Telefon: ${user.phone || 'N/A'}`;
+                            userItemDiv.appendChild(phoneSpan);
+
+                            const actionButton = document.createElement('button');
+                            actionButton.classList.add('btn', user.isAdmin ? 'btn-secondary' : 'btn-primary');
+                            actionButton.textContent = user.isAdmin ? 'Kullanıcı Yap' : 'Yönetici Yap';
+                            actionButton.addEventListener('click', () => toggleAdminStatus(user.id, !user.isAdmin));
+                            userItemDiv.appendChild(actionButton);
+
+                            userListContent.appendChild(userItemDiv);
+                        });
+                        userListContent.scrollTop = userListContent.scrollHeight; // Otomatik kaydır
+                    }
+                } catch (error) {
+                    console.error('Kullanıcılar yüklenirken hata:', error);
+                    userListContent.innerHTML = '<p class="error-message"><i class="fas fa-times-circle"></i> Kullanıcılar yüklenemedi. Sunucuyu kontrol edin.</p>';
+                }
+            }
+
+            async function toggleAdminStatus(userId, makeAdmin) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/users/${userId}/admin`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ isAdmin: makeAdmin })
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Yönetici durumu güncellenemedi.');
+                    }
+                    alert(`Kullanıcının yönetici durumu başarıyla ${makeAdmin ? 'yönetici' : 'kullanıcı'} olarak değiştirildi.`);
+                    fetchUsers(); // Listeyi yenile
+                } catch (error) {
+                    console.error('Yönetici durumu güncelleme hatası:', error);
+                    alert('Yönetici durumu güncellenirken hata oluştu: ' + error.message);
+                }
+            }
+
+            fetchUsers(); // Sayfa yüklendiğinde kullanıcıları çek
+
+            // --- Erişim Günlükleri İşlevselliği ---
+            refreshLogsContentBtn.addEventListener('click', fetchAccessLogs);
+
+            async function fetchAccessLogs() {
+                accessLogListContent.innerHTML = '<p class="loading-message"><i class="fas fa-spinner fa-spin"></i> Günlükler yükleniyor...</p>';
+                accessLogsContentMessage.textContent = '';
+                accessLogsContentMessage.className = 'auth-message';
+                try {
+                    const response = await fetch(`${API_BASE_URL}/stats/logs`);
+                    if (!response.ok) {
+                        throw new Error('Erişim günlükleri alınamadı: ' + response.statusText);
+                    }
+                    let logs = await response.json();
+                    
+                    // --- TEST İÇİN EK İÇERİK OLUŞTURMA (Kaydırmayı zorlamak için) ---
+                    // Bu kısmı gerçek kullanımda SİLECEKSİN
+                    if (logs.length < 50) { // Sadece az log varsa ekle
+                        for (let i = 0; i < 70; i++) { // 70 adet dummy log ekle
+                            const dummyType = ['SiteErisim', 'GirisBasarili', 'GirisBasarisiz', 'KayıtBasarili', 'KayıtBasarisiz'][Math.floor(Math.random() * 5)];
+                            const dummyIp = `192.168.1.${i % 255}`;
+                            const dummyUsername = `testuser${i}`;
+                            const dummyUrl = `/page${i}.html`;
+                            const dummyReason = (i % 3 === 0) ? 'Yanlış parola' : '';
+
+                            logs.push({ 
+                                timestamp: new Date(Date.now() - i * 1000 * 60).toISOString(), 
+                                type: dummyType, 
+                                ip: dummyIp, 
+                                url: dummyUrl, 
+                                username: dummyUsername,
+                                reason: dummyReason,
+                                attempts: Math.floor(Math.random() * 5) + 1
+                            });
+                        }
+                    }
+                    logs.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)); // Tarihe göre sırala
+                    // --- TEST İÇİN EK İÇERİK SONU ---
+
+                    if (logs.length === 0) {
+                        accessLogListContent.innerHTML = '<p class="no-users-message">Henüz erişim günlüğü bulunamadı.</p>';
+                    } else {
+                        accessLogListContent.innerHTML = '';
+                        logs.reverse().forEach(log => {
+                            const logEntryDiv = document.createElement('div');
+                            logEntryDiv.classList.add('log-entry');
+                            
+                            const logTypeClass = log.type.toLowerCase().replace(/([A-Z])/g, '-$1').replace(/^-/, '').toLowerCase(); // CSS sınıfı için düzenle
+
+                            let logContent = `<span class="log-timestamp">[${new Date(log.timestamp).toLocaleString('tr-TR')}]</span> `;
+                            logContent += `<span class="log-type ${logTypeClass}">${log.type.replace(/([A-Z])/g, ' $1').trim()}</span>: `;
+                            
+                            if (log.type === 'SiteErisim') {
+                                logContent += `<span class="log-ip">${log.ip}</span> adresinden <span class="log-url">${log.url}</span> sayfasına erişim.`;
+                            } else if (log.type === 'KayıtBasarili' || log.type === 'GirisBasarili') {
+                                logContent += `Kullanıcı <span class="log-username">${log.username}</span> tarafından başarılı ${log.type === 'KayıtBasarili' ? 'kayıt' : 'giriş'}. IP: <span class="log-ip">${log.ip}</span>.`;
+                            } else if (log.type === 'KayıtBasarisiz' || log.type === 'GirisBasarisiz') {
+                                logContent += `Kullanıcı ${log.username || 'Bilinmiyor'} tarafından başarısız ${log.type === 'KayıtBasarisiz' ? 'kayıt' : 'giriş'}.`;
+                                if (log.reason) logContent += ` Sebep: <span class="log-reason">${log.reason}</span>.`;
+                                if (log.attempts) logContent += ` Deneme Sayısı: <span class="log-attempts">${log.attempts}</span>.`;
+                                logContent += ` IP: <span class="log-ip">${log.ip}</span>.`;
+                            }
+
+                            logEntryDiv.innerHTML = logContent;
+                            accessLogListContent.appendChild(logEntryDiv);
+                        });
+                        accessLogListContent.scrollTop = accessLogListContent.scrollHeight; // Otomatik kaydır
+                    }
+                    accessLogsContentMessage.textContent = 'Günlükler güncellendi.';
+                    accessLogsContentMessage.className = 'auth-message success';
+                } catch (error) {
+                    console.error('Erişim günlükleri yüklenirken hata:', error);
+                    accessLogListContent.innerHTML = '<p class="error-message"><i class="fas fa-times-circle"></i> Günlükler yüklenemedi. Sunucuyu kontrol edin.</p>';
+                    accessLogsContentMessage.textContent = `Hata: Günlükler yüklenemedi. Detay: ${error.message}`;
+                    accessLogsContentMessage.className = 'auth-message error';
+                }
+            }
+
+            // --- Sağ Panel: Rastgele Anahtar Akışı ---
+            function generateRandomKey(length = 18) {
+                const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=[]{}|;:,.<>?';
+                let result = '';
+                for (let i = 0; i < length; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return result;
+            }
+
+            function updateRandomKeys() {
+                randomKeysList.innerHTML = ''; // Temizle
+                for (let i = 0; i < 50; i++) { // TEST İÇİN 50 anahtar gösterelim (normalde daha az olabilir)
+                    const keyItem = document.createElement('div');
+                    keyItem.classList.add('random-key-item');
+                    keyItem.textContent = generateRandomKey();
+                    randomKeysList.appendChild(keyItem);
+                }
+                randomKeysList.scrollTop = randomKeysList.scrollHeight; // Otomatik kaydır
+            }
+            updateRandomKeys(); // Sayfa yüklendiğinde ilk anahtarları oluştur
+            setInterval(updateRandomKeys, 2000); // Her 2 saniyede bir güncelle
+
+            // --- Terminal Çıktısı Simulasyonu ---
+            // Bu fonksiyon, access_log.json'daki logları terminal çıktısı gibi gösterir.
+            // Gerçek zamanlı bir terminal çıktısı değildir, log dosyasını okur.
+            async function simulateTerminalOutput() {
+                terminalOutput.innerHTML = '<div class="terminal-line prompt">> _</div>'; // Başlangıç prompt'u
+                try {
+                    const response = await fetch(`${API_BASE_URL}/stats/logs`);
+                    if (!response.ok) {
+                        throw new Error('Günlükler alınamadı.');
+                    }
+                    const logs = await response.json();
+                    
+                    if (logs.length === 0) {
+                        appendTerminalLine('Sistemde henüz bir günlük bulunamadı.', 'info');
+                    } else {
+                        const maxLogs = 50; // Terminalde gösterilecek maksimum günlük sayısı (TEST İÇİN ARTIRILDI)
+                        const recentLogs = logs.slice(Math.max(0, logs.length - maxLogs), logs.length); // Son logları al
+
+                        recentLogs.forEach(log => {
+                            let message = `[${new Date(log.timestamp).toLocaleTimeString('tr-TR')}] `;
+                            let typeClass = 'info';
+
+                            if (log.type === 'SiteErisim') {
+                                message += `Erişim: ${log.ip} -> ${log.url}`;
+                                typeClass = 'site-access';
+                            } else if (log.type === 'GirisBasarili') {
+                                message += `Giriş BAŞARILI: ${log.username} (${log.ip})`;
+                                typeClass = 'success';
+                            } else if (log.type === 'GirisBasarisiz') {
+                                message += `Giriş BAŞARISIZ: ${log.username || 'Bilinmiyor'} (${log.ip}) - Sebep: ${log.reason} (Deneme: ${log.attempts})`;
+                                typeClass = 'error';
+                            } else if (log.type === 'KayıtBasarili') {
+                                message += `Kayıt BAŞARILI: ${log.username} (${log.ip})`;
+                                typeClass = 'success';
+                            } else if (log.type === 'KayıtBasarisiz') {
+                                message += `Kayıt BAŞARISIZ: ${log.username || 'Bilinmiyor'} (${log.ip}) - Sebep: ${log.reason}`;
+                                typeClass = 'error';
+                            }
+                            appendTerminalLine(message, typeClass);
+                        });
+                    }
+                } catch (error) {
+                    appendTerminalLine(`Hata: Günlükler yüklenemedi. ${error.message}`, 'error');
+                }
+                terminalOutput.scrollTop = terminalOutput.scrollHeight; // En alta kaydır
+            }
+
+            function appendTerminalLine(text, type = 'default') {
+                const promptLine = terminalOutput.querySelector('.terminal-line.prompt');
+                if (promptLine) {
+                    promptLine.remove(); // Mevcut prompt'u kaldır
+                }
+
+                const lineDiv = document.createElement('div');
+                lineDiv.classList.add('terminal-line');
+                lineDiv.classList.add(type);
+                lineDiv.textContent = text;
+                terminalOutput.appendChild(lineDiv);
+                
+                // Yeni prompt'u ekle
+                const newPromptLine = document.createElement('div');
+                newPromptLine.classList.add('terminal-line', 'prompt');
+                newPromptLine.textContent = '> _';
+                terminalOutput.appendChild(newPromptLine);
+
+                terminalOutput.scrollTop = terminalOutput.scrollHeight; // Otomatik kaydır
+            }
+
+            simulateTerminalOutput(); // Sayfa yüklendiğinde terminali doldur
+            setInterval(simulateTerminalOutput, 10000); // Her 10 saniyede bir güncelle
+
+            // Tüm modal kapatma işlevselliği
+            document.querySelectorAll('.settings-modal .close-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.settings-modal').style.display = 'none';
+                    // İlgili mesaj alanlarını da temizle (Eğer varsa)
+                    const messageEl = this.closest('.modal-content').querySelector('.auth-message');
+                    if (messageEl) messageEl.textContent = '';
+                });
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('settings-modal')) {
+                    event.target.style.display = 'none';
+                    const messageEl = event.target.querySelector('.auth-message');
+                    if (messageEl) messageEl.textContent = '';
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Dynamic Profile</title>
+
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts - Inter for modern typography -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    
+    <!-- Three.js library for the 3D background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- All CSS styles are in this <style> block -->
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #0c0a09; /* Fallback for browsers without canvas */
+        }
+
+        /* Glassmorphism effect for cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* Loader animation */
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #45759f;
+            animation: spin 1.32s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Sparkle effect on buttons */
+        .sparkle-button {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .sparkle-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 80%);
+            transition: transform 0.5s ease-out;
+            transform: translate(-50%, -50%) scale(0);
+        }
+
+        .sparkle-button:hover::before {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0;
+        }
+
+        /* Profile image container styling */
+        .profile-image-container {
+            @apply w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-blue-600 shadow-xl transition-all duration-500 transform hover:scale-105;
+        }
+
+        /* Info box styling */
+        .info-box-stat {
+            @apply glass-card p-6 rounded-2xl text-center transition-all duration-300 transform hover:scale-105;
+        }
+
+        /* Skill tag styling */
+        .skill-tag {
+            @apply bg-blue-500/10 text-blue-300 font-medium px-4 py-2 rounded-full text-sm transition-all duration-300 transform hover:bg-blue-500/20 hover:scale-105;
+        }
+
+        /* Card entry animation */
+        #profile-card.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        /* Utility classes */
+        .hidden {
+            display: none;
+        }
+        .visible {
+            display: block;
+        }
+        /* Canvas styling */
+        #bg-canvas {
+            background: linear-gradient(135deg, #0c0a09 0%, #1a1a1a 100%);
+        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .profile-name {
+                font-size: 2.5rem;
+            }
+            .profile-email {
+                font-size: 0.875rem;
+            }
+        }
+        /* Scrollbar styling for overflow areas */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        info-box-stat p {
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 overflow-hidden">
+    <!-- Canvas for the 3D background -->
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
+
+    <!-- Main container for the content -->
+    <div class="main-container relative min-h-screen flex items-center justify-center p-4">
+        
+        <!-- Loading and error message areas -->
+        <div id="loading-area" class="flex flex-col items-center justify-center text-white text-center">
+            <div class="loader"></div>
+            <p class="text-2xl font-semibold mt-4">Evren Yükleniyor...</p>
+        </div>
+
+        <div id="error-area" class="hidden glass-card p-6 rounded-3xl w-full max-w-lg text-white text-center">
+            <h2 class="text-3xl font-extrabold text-red-500 mb-4">Bir Sorun Var!</h2>
+            <p id="error-message" class="text-lg text-gray-400"></p>
+        </div>
+
+        <!-- The profile card itself - hidden initially -->
+        <div id="profile-card" class="hidden glass-card p-8 rounded-3xl w-full max-w-4xl text-white transform scale-90 opacity-0 transition-all duration-1000">
+
+            <!-- Profile Header Section -->
+            <div class="flex flex-col md:flex-row items-center justify-between mb-8">
+                <div class="flex items-center space-x-6 text-left">
+                    <div class="profile-image-container">
+                        <!-- SVG placeholder for profile image -->
+                        <svg class="w-24 h-24 text-blue-400 p-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 id="profile-name" class="text-5xl font-extrabold text-white"></h1>
+                        <p id="profile-email" class="text-lg text-gray-400 font-light mt-1"></p>
+                    </div>
+                </div>
+                <button id="logout-button" class="mt-6 md:mt-0 flex-1 md:flex-grow-0 md:flex-shrink-0 bg-red-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-red-700 transition-colors duration-300 sparkle-button">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Çıkış Yap
+                </button>
+            </div>
+
+            <!-- About section -->
+            <div class="glass-card p-6 rounded-xl mb-8">
+                <h3 class="text-2xl font-bold mb-3 text-blue-400">Hakkımda</h3>
+                <p id="profile-bio" class="text-gray-300 text-lg leading-relaxed"></p>
+            </div>
+            
+            <!-- Info boxes and stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Username box -->
+                <div class="info-box-stat">
+                    <i class="fas fa-user-circle text-blue-400 text-3xl mb-2"></i>
+                    <p class="text-sm text-gray-400 font-medium">Kullanıcı Adı</p>
+                    <p id="profile-username" class="text-xl font-bold text-white mt-1"></p>
+                </div>
+                <!-- Join Date box -->
+                <div class="info-box-stat">
+                    <i class="fas fa-calendar-alt text-blue-400 text-3xl mb-2"></i>
+                    <p class="text-sm text-gray-400 font-medium">Üyelik Tarihi</p>
+                    <p id="profile-date" class="text-xl font-bold text-white mt-1"></p>
+                </div>
+                <!-- Projects box -->
+                <div class="info-box-stat">
+                    <i class="fas fa-project-diagram text-blue-400 text-3xl mb-2"></i>
+                    <p class="text-sm text-gray-400 font-medium">Tamamlanan Proje</p>
+                    <p id="profile-projects" class="text-xl font-bold text-white mt-1"></p>
+                </div>
+            </div>
+
+            <!-- Skills and interests section -->
+            <div class="glass-card p-6 rounded-xl">
+                <h3 class="text-2xl font-bold mb-3 text-blue-400">Yetenekler ve İlgi Alanları</h3>
+                <div id="profile-skills" class="flex flex-wrap gap-3">
+                    <!-- Skills will be populated here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- All JavaScript logic is in this <script> block -->
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Select all necessary HTML elements
+            const loadingArea = document.getElementById('loading-area');
+            const profileCard = document.getElementById('profile-card');
+            const errorArea = document.getElementById('error-area');
+            const errorMessageEl = document.getElementById('error-message');
+            const logoutButton = document.getElementById('logout-button');
+            
+            // Dynamic elements within the profile card
+            const profileName = document.getElementById('profile-name');
+            const profileEmail = document.getElementById('profile-email');
+            const profileBio = document.getElementById('profile-bio');
+            const profileUsername = document.getElementById('profile-username');
+            const profileDate = document.getElementById('profile-date');
+            const profileProjects = document.getElementById('profile-projects');
+            const profileSkills = document.getElementById('profile-skills');
+
+            // ----------------------------------------------------------------------
+            // 3D Background (Particle Effect)
+            // Using the Three.js library
+            // ----------------------------------------------------------------------
+            let scene, camera, renderer, particleSystem;
+
+            const init3DBackground = () => {
+                const canvas = document.getElementById('bg-canvas');
+                
+                // Create the scene
+                scene = new THREE.Scene();
+                
+                // Create the camera
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                camera.position.z = 5;
+
+                // Create the renderer
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+
+                // Create particle geometry
+                const particleCount = 2000;
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+                
+                const color = new THREE.Color();
+                const blue = new THREE.Color('#4682B4');
+                const cyan = new THREE.Color('#00FFFF');
+                
+                for (let i = 0; i < particleCount; i++) {
+                    positions[i * 3 + 0] = (Math.random() - 0.5) * 100; // x
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * 100; // y
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 100; // z
+                    
+                    // Assign random colors
+                    color.lerpColors(blue, cyan, Math.random());
+                    colors[i * 3 + 0] = color.r;
+                    colors[i * 3 + 1] = color.g;
+                    colors[i * 3 + 2] = color.b;
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                // Create material
+                const material = new THREE.PointsMaterial({
+                    size: 0.1,
+                    vertexColors: true,
+                    blending: THREE.AdditiveBlending,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                // Create the particle system
+                particleSystem = new THREE.Points(geometry, material);
+                scene.add(particleSystem);
+                
+                // Handle window resize event
+                window.addEventListener('resize', onWindowResize, false);
+            };
+
+            const onWindowResize = () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            };
+
+            // Animation loop for particles
+            const animateParticles = () => {
+                requestAnimationFrame(animateParticles);
+
+                // Rotate the particles slowly
+                particleSystem.rotation.x += 0.0001;
+                particleSystem.rotation.y += 0.0002;
+
+                renderer.render(scene, camera);
+            };
+            
+            // ----------------------------------------------------------------------
+            // Dynamic Data Loading Simulation
+            // ----------------------------------------------------------------------
+            const fetchUserProfile = () => {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        const isError = false; // Set to 'true' to simulate an error
+
+                        if (!isError) {
+                            const userData = {
+                                name: 'DENEME!',
+                                username: 'deneme123',
+                                email: 'deneme@deneme.com',
+                                bio: 'Yalnızca sıradan bir kullanıcı değil, teknolojinin her alanına dokunan ve dijital dünyayı şekillendiren bir öncü. Her gün yeni bir proje, yeni bir meydan okuma peşinde.',
+                                joinDate: '15 Mart 2023',
+                                projects: 42,
+                                skills: [
+                                    'Web Geliştirme (React)',
+                                    'Yapay Zeka & Makine Öğrenmesi',
+                                    'Mobil Uygulama (Swift)',
+                                    '3D Animasyon',
+                                    'Oyun Geliştirme (Unity)',
+                                    'Veri Analizi',
+                                    'Bulut Bilişim (GCP)'
+                                ]
+
+                            };
+                            resolve(userData);
+                        } else {
+                            reject(new Error('Kullanıcı bilgileri evreninden bir hata sinyali geldi. Lütfen tekrar deneyin.'));
+                        }
+                    }, 3000); // Simulate a 3-second network delay
+                });
+            };
+
+            // Main function to load the profile
+            const loadProfile = async () => {
+                // Show loading area and hide others
+                loadingArea.classList.remove('hidden');
+                profileCard.classList.add('hidden');
+                errorArea.classList.add('hidden');
+
+                try {
+                    // Await the user data
+                    const userData = await fetchUserProfile();
+
+                    // Populate the profile card with the fetched data
+                    profileName.textContent = userData.name;
+                    profileEmail.textContent = userData.email;
+                    profileBio.textContent = userData.bio;
+                    profileUsername.textContent = userData.username;
+                    profileDate.textContent = userData.joinDate;
+                    profileProjects.textContent = userData.projects;
+
+                    // Dynamically create skill tags
+                    profileSkills.innerHTML = '';
+                    userData.skills.forEach(skill => {
+                        const skillTag = document.createElement('span');
+                        skillTag.textContent = skill;
+                        skillTag.className = 'skill-tag';
+                        profileSkills.appendChild(skillTag);
+                    });
+
+                    // Hide loading area and show profile card
+                    loadingArea.classList.add('hidden');
+                    profileCard.classList.remove('hidden');
+                    
+                    // Trigger the animated entry of the card
+                    setTimeout(() => {
+                        profileCard.classList.add('visible');
+                    }, 50);
+
+                } catch (error) {
+                    // Handle and display error messages
+                    loadingArea.classList.add('hidden');
+                    errorArea.classList.remove('hidden');
+                    errorMessageEl.textContent = error.message;
+                }
+            };
+
+            // Add click event listener to the logout button
+            logoutButton.addEventListener('click', () => {
+                // Simple simulation of a logout action by reloading the page
+                window.location.reload();
+            });
+
+            // Start the 3D background and load the profile on window load
+            window.onload = function() {
+                init3DBackground();
+                animateParticles();
+                loadProfile();
+            };
+        });
+    </script>
+</body>
+</html>

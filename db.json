@@ -1,0 +1,14 @@
+[
+  {
+    "username": "ahmet eren",
+    "phone": "505-540-62-24",
+    "password": "$2b$10$MOL91pB3x9qysxMru0EKd.u5tNeg7XN9hyhF1ja0VMBA23RfRjdDa",
+    "isAdmin": false
+  },
+  {
+    "username": "adana",
+    "phone": "505-211-11-11",
+    "password": "$2b$10$gsI5xp5eshwUQGFuQHGQAek9CW.eyRertLEHGTiqFxlRuopwaCcEa",
+    "isAdmin": true
+  }
+]
